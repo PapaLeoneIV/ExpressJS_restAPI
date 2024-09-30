@@ -1,6 +1,5 @@
 import express, { Router } from "express";
 import { receive_order ,handler_confirm_request , handler_bank_update} from "../service/moneyService";
-import { logger } from "../../../../logger/logger";
 
 export const app = express();
 

@@ -1,7 +1,6 @@
 import express from 'express';
 import { db, connectToDatabase } from './db/db';
 import { app, MoneyRouter } from "./api/router/moneyRouter"
-import { logger } from "../../logger/logger";
 
 
 const port = 3002;

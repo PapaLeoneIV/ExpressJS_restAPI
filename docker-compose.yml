@@ -38,8 +38,77 @@ services:
     ports:
       - "3000:3000"
     # expose:
-    #   - "3001"
+    #   - "3000"
 
+  hotel-service:
+    build: ./src/backend/hotel_micro
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_DB=hotel_booking
+      - POSTGRES_USER=rileone
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
+      - DATABASE_URL=postgres://rileone:password@db_hotel:5432/hotel_renting
+    command: >
+      sh -c "npm install \
+      && npx prisma generate --schema ./prisma/schema.prisma \
+      && npx tsx src/index.ts"
+    volumes:
+      - ./src/backend/hotel_micro:/app
+      - ./src/backend/hotel_micro/package.json:/app/package.json
+    depends_on:
+      - db_hotel
+    networks:
+      - express_network
+    ports:
+      - "3001:3000"
+
+  money-service:
+    build: ./src/backend/money_micro
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_DB=money_confirmation
+      - POSTGRES_USER=rileone
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
+      - DATABASE_URL=postgres://rileone:password@db_money:5432/money_confirmation
+    command: >
+      sh -c "npm install \
+      && npx prisma generate --schema ./prisma/schema.prisma \
+      && npx tsx src/index.ts"
+    volumes:
+      - ./src/backend/money_micro:/app
+      - ./src/backend/money_micro/package.json:/app/package.json
+    depends_on:
+      - db_money
+    networks:
+      - express_network
+    ports:
+      - "3002:3000"
+    
+  order-management-service:
+    build: ./src/backend/order_micro
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_DB=order_management
+      - POSTGRES_USER=rileone
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
+      - DATABASE_URL=postgres://rileone:password@db_order_management:5432/order_management
+    command: >
+      sh -c "npm install \
+      && npx prisma generate --schema ./src/prisma/schema.prisma \
+      && npx tsx src/index.ts"
+    volumes:
+      - ./src/backend/order_micro:/app
+      - ./src/backend/order_micro/package.json:/app/package.json
+    depends_on:
+      - db_order_management
+    networks:
+      - express_network
+    ports:
+      - "3003:3000"
+  
   db_bike:
     image: postgres:13
     environment:
@@ -56,49 +125,49 @@ services:
     ports:
       - "5433:5432"
     # expose:
-    #   - "5433"
+    #   - "5432"
 
-  # db_hotel:
-  #   image: postgres:13
-  #   container_name: db_hotel_booking
-  #   environment:
-  #     POSTGRES_USER: rileone
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: hotel_booking
-  #   ports:
-  #     - "5434:5432"
-  #   volumes:
-  #     - db_hotel:/var/lib/postgresql/data
-  #     - ./src/backend/hotel_micro/init.sql:/docker-entrypoint-initdb.d/init.sql
-  #   networks:
-  #     - express_network
-  # db_money:
-  #   image: postgres:13
-  #   container_name: db_money_confirmation
-  #   environment:
-  #     POSTGRES_USER: rileone
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: money_confirmation
-  #   ports:
-  #     - "5435:5432"
-  #   volumes:
-  #     - db_money:/var/lib/postgresql/data
-  #   networks:
-  #     - express_network
-  #--------------------------
-  # db_order_management:
-  #   image: postgres:13
-  #   container_name: db_order_management
-  #   environment:
-  #     POSTGRES_USER: rileone
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: order_management
-  #   ports:
-  #     - "5436:5432"
-  #   volumes:
-  #     - db_order_management:/var/lib/postgresql/data
-  #   networks:
-  #     - express_network
+  db_hotel:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=rileone
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=hotel_booking
+    volumes:
+      - ./db_hotel:/var/lib/postgresql/data
+      - ./src/backend/hotel_micro/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - express_network
+    ports:
+      - "5434:5432"
+  
+  db_money:
+    image: postgres:13
+    container_name: db_money_confirmation
+    environment:
+      POSTGRES_USER: rileone
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: money_confirmation
+    volumes:
+      - ./db_money:/var/lib/postgresql/data
+    networks:
+      - express_network
+    ports:
+      - "5435:5432"
+
+  db_order_management:
+    image: postgres:13
+    container_name: db_order_management
+    environment:
+      POSTGRES_USER: rileone
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: order_management
+    volumes:
+      - ./db_order_management:/var/lib/postgresql/data
+    networks:
+      - express_network
+    ports:
+      - "5436:5432"
   
   
   

@@ -27,3 +27,41 @@ up-bike-service:
 	docker compose up -d db_bike
 	docker compose up bike-service 
 #
+
+#---HOTEL MICROSERVICE MANAGEMENT---#
+build-hotel-service:
+	docker compose build hotel-service
+
+up-hotel-service:
+	docker compose up -d db_hotel
+	docker compose up hotel-service
+
+#---MONEY MICROSERVICE MANAGEMENT---#
+build-money-service:
+	docker compose build money-service
+
+up-money-service:
+	docker compose up -d db_money
+	docker compose up money-service
+
+#---ORDER MICROSERVICE MANAGEMENT---#
+build-order-service:
+	docker compose build order-management-service
+
+up-order-service:
+	docker compose up -d db_order_management
+	docker compose up order-management-service
+
+#---DOCKER COMPOSE MANAGEMENT---#
+
+# Start all microservices
+start_docker_compose:
+	docker compose up
+
+# Start bike microservice
+start_bike_micro:
+	docker compose up bike-service
+
+# Start hotel microservice
+start_hotel_micro:
+	docker compose up hotel-service

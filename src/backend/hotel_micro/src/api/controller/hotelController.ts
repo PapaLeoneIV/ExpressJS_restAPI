@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { logger } from "../../../../logger/logger";
 import { z } from "zod";
 import { check_hotel_availability } from "../service/hotelService";
 
@@ -23,7 +22,7 @@ export const receive_order = async (req: Request, res: Response): Promise<void> 
   try {
       parsedBody = order_schema.parse(req.body.hotel);
     } catch (error) {
-      logger.error("Error parsing data: request body not valid!", error);
+      console.error("Error parsing data: request body not valid!", error);
       res.status(400).json({ error: "Bad Request" });
       return;
     }
@@ -39,7 +38,7 @@ export const receive_order = async (req: Request, res: Response): Promise<void> 
       else { res.send("HOTELDENIED");}  
     } catch (error) {
       res.status(500).json({ error: "Internal Server Error" });
-      logger.error("Error parsing data: request body not valid!", error);
+      console.error("Error parsing data: request body not valid!", error);
       return;
     }
   };

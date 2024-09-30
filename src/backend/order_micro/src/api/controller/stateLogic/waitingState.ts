@@ -1,4 +1,3 @@
-import { logger } from "../../../../../logger/logger";
 import { OrderState, OrderContext } from "./orderStateLogic";
 import { CompletedState } from "./completedState";
 import { FailedState } from "./failedState";
@@ -37,7 +36,7 @@ export class WaitingState implements OrderState {
         context.processOrder(bikes, hotel);
       }
     } catch (error) {
-      logger.error("Error in sending order!");
+      console.error("Error in sending order!");
       context.setState(new FailedState());
     }
   }

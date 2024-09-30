@@ -1,4 +1,3 @@
-import { logger } from "../../../../../logger/logger"
 import { WaitingState } from './waitingState'
 import axios from "axios"
 

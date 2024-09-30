@@ -1,4 +1,3 @@
-import { logger } from "../../../../../logger/logger"
 import {OrderState, OrderContext} from "orderStateLogic"
 
 export class CompletedState implements OrderState {

@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { logger } from "../../../../logger/logger";
 import { string } from "zod";
 /**DATA TABLE
                      * id | booking_date 
