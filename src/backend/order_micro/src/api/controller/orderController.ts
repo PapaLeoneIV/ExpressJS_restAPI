@@ -20,8 +20,10 @@ const order_schema = z.object({
 });
 
 
+//  Handler for booking a vacation with bikes and hotel
 export const handler_book_vacation = async (req: Request, res: Response): Promise<void> => {
     let parsedBody: any;
+    //  Parse the request body
     try {
         parsedBody = order_schema.parse(req.body);
     } catch (error) {
@@ -29,6 +31,7 @@ export const handler_book_vacation = async (req: Request, res: Response): Promis
         res.status(400).json({ error: "Bad Request" });
         return;
     }
+    //  Process the order
     try {
         const bikes = req.body.order.bikes
         const hotel = req.body.order.hotel

@@ -1,5 +1,4 @@
 import express from 'express';
-import { logger } from "../../logger/logger";
 import { db, connectToDatabase } from './db/db';
 import { app, BikeRouter } from "./api/router/bikeRouter"
 const port = 3000;
@@ -29,5 +28,3 @@ function main() {
 }
 
 main();
-
-

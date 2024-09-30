@@ -1,6 +1,5 @@
 import express, { Router } from "express";
-import { logger } from "../../../../logger/logger";
-import { receive_order, handler_confirm_request, handler_bike_shop_update } from "../controllers/bikeControllers";
+import { receive_order, revert_order } from "../controllers/bikeControllers";
 
 export const app = express();
 
@@ -15,6 +14,9 @@ const BikeRouter = Router();
 
 BikeRouter.post("/send_data", receive_order);
 console.log("[INFO] Set up send_data route...");
+
+BikeRouter.post("/revert_order", revert_order);
+console.log("[INFO] Set up revert_order route...");
 
 //BikeRouter.post("/bike_shop_update", handler_bike_shop_update)
 //console.log("[INFO] Set up bike_shop_update route...");

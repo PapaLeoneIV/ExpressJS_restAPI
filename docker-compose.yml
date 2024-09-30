@@ -1,62 +1,104 @@
-version: '3.8'
+networks:
+  express_network:
+
+#TODO_PROD: uncomment in production
+# volumes:
+  # db_bike:
+  #   driver: local
+  # db_order_management:
+  # db_hotel:
+  # db_money:
+
 services:
- 
+
+  bike-service:
+    build: ./src/backend/bike_micro
+    environment:
+    #TODO_PROD: update in "production"
+      - NODE_ENV=development #enabling more verbose logging, using development-specific configurations, or enabling hot-reloading
+      - POSTGRES_DB=bike_renting
+      - POSTGRES_USER=rileone
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
+      - DATABASE_URL=postgres://rileone:password@db_bike:5432/bike_renting
+    command: >
+      sh -c "npm install \
+      && npx prisma generate --schema ./src/prisma/schema.prisma \
+      && npx tsx src/index.ts"
+    #TODO_PROD: remove in production
+    volumes:
+      - ./src/backend/bike_micro:/app
+      - ./src/backend/bike_micro/package.json:/app/package.json
+      # - /app/node_modules
+    depends_on:
+      - db_bike
+    networks:
+      - express_network
+    #TODO_PROD: update to serve only in the internal network
+    ports:
+      - "3000:3000"
+    # expose:
+    #   - "3001"
+
   db_bike:
     image: postgres:13
-    container_name: db_bike_renting
     environment:
-      POSTGRES_USER: rileone
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: bike_renting
-    ports:
-      - "5433:5432"
-    expose:
-      - "5433"
+      - POSTGRES_USER=rileone
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=bike_renting
     volumes:
-      - db_bike:/var/lib/postgresql/data
+    #TODO_PROD: update to let docker manage the volume
+      - ./db_bike:/var/lib/postgresql/data
       - ./src/backend/bike_micro/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - express_network
-  db_hotel:
-    image: postgres:13
-    container_name: db_hotel_booking
-    environment:
-      POSTGRES_USER: rileone
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: hotel_booking
+    #TODO_PROD: update to serve only in the internal network
     ports:
-      - "5434:5432"
-    volumes:
-      - db_hotel:/var/lib/postgresql/data
-      - ./src/backend/hotel_micro/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - express_network
-  db_money:
-    image: postgres:13
-    container_name: db_money_confirmation
-    environment:
-      POSTGRES_USER: rileone
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: money_confirmation
-    ports:
-      - "5435:5432"
-    volumes:
-      - db_money:/var/lib/postgresql/data
-    networks:
-      - express_network
-  db_order_management:
-    image: postgres:13
-    container_name: db_order_management
-    environment:
-      POSTGRES_USER: rileone
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: order_management
-    ports:
-      - "5436:5432"
-    volumes:
-      - db_order_management:/var/lib/postgresql/data
-    networks:
-      - express_network
+      - "5433:5432"
+    # expose:
+    #   - "5433"
+
+  # db_hotel:
+  #   image: postgres:13
+  #   container_name: db_hotel_booking
+  #   environment:
+  #     POSTGRES_USER: rileone
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: hotel_booking
+  #   ports:
+  #     - "5434:5432"
+  #   volumes:
+  #     - db_hotel:/var/lib/postgresql/data
+  #     - ./src/backend/hotel_micro/init.sql:/docker-entrypoint-initdb.d/init.sql
+  #   networks:
+  #     - express_network
+  # db_money:
+  #   image: postgres:13
+  #   container_name: db_money_confirmation
+  #   environment:
+  #     POSTGRES_USER: rileone
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: money_confirmation
+  #   ports:
+  #     - "5435:5432"
+  #   volumes:
+  #     - db_money:/var/lib/postgresql/data
+  #   networks:
+  #     - express_network
+  #--------------------------
+  # db_order_management:
+  #   image: postgres:13
+  #   container_name: db_order_management
+  #   environment:
+  #     POSTGRES_USER: rileone
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: order_management
+  #   ports:
+  #     - "5436:5432"
+  #   volumes:
+  #     - db_order_management:/var/lib/postgresql/data
+  #   networks:
+  #     - express_network
   
   
   
@@ -98,11 +140,3 @@ services:
   #  networks:
   #    - express_network
 
-volumes:
-  db_order_management:
-  db_bike:
-  db_hotel:
-  db_money:
-
-networks:
-  express_network:
