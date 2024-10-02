@@ -1,11 +1,4 @@
-.PHONY: start_bike_micro start_hotel_micro start_money_micro start_order_micro start_docker_compose start_all
-
-# Define paths to each microservice
-NAME=expressjs_restapi
-BIKE_MICRO_DIR=./src/backend/bike_micro
-HOTEL_MICRO_DIR=./src/backend/hotel_micro
-MONEY_MICRO_DIR=./src/backend/money_micro
-ORDER_MICRO_DIR=./src/backend/order_micro
+.PHONY: all build up down build-bike-rental-service up-bike-rental-service build-hotel-booking-service up-hotel-booking-service build-payment-service up-payment-service build-order-service up-order-service start_docker_compose start_bike-rental start_hotel-booking
 
 #---FULL APPLICATION MANAGEMENT---#
 all: build up
@@ -20,37 +13,37 @@ down:
 	docker compose down
 
 #---BIKE MICROSERVICE MANAGEMENT---#
-build-bike-service:
-	docker compose build bike-service
+build-bike-rental-service:
+	docker compose build bike-rental-service
 
-up-bike-service:
-	docker compose up -d db_bike
-	docker compose up bike-service 
+up-bike-rental-service:
+	docker compose up -d db_bike_rental
+	docker compose up bike-rental-service 
 #
 
 #---HOTEL MICROSERVICE MANAGEMENT---#
-build-hotel-service:
-	docker compose build hotel-service
+build-hotel-booking-service:
+	docker compose build hotel-booking-service
 
-up-hotel-service:
-	docker compose up -d db_hotel
-	docker compose up hotel-service
+up-hotel-booking-service:
+	docker compose up -d db_hotel_booking --remove-orphans
+	docker compose up hotel-booking-service --remove-orphans
 
 #---MONEY MICROSERVICE MANAGEMENT---#
-build-money-service:
-	docker compose build money-service
+build-payment-service:
+	docker compose build payment-service
 
-up-money-service:
-	docker compose up -d db_money
-	docker compose up money-service
+up-payment-service:
+	docker compose up -d db_payment --remove-orphans
+	docker compose up payment-service --remove-orphans
 
 #---ORDER MICROSERVICE MANAGEMENT---#
 build-order-service:
 	docker compose build order-management-service
 
 up-order-service:
-	docker compose up -d db_order_management
-	docker compose up order-management-service
+	docker compose up -d db_order_management --remove-orphans
+	docker compose up order-management-service --remove-orphans
 
 #---DOCKER COMPOSE MANAGEMENT---#
 
@@ -59,9 +52,9 @@ start_docker_compose:
 	docker compose up
 
 # Start bike microservice
-start_bike_micro:
-	docker compose up bike-service
+start_bike-rental:
+	docker compose up bike-rental-service
 
 # Start hotel microservice
-start_hotel_micro:
-	docker compose up hotel-service
+start_hotel-booking:
+	docker compose up hotel-booking-service

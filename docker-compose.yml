@@ -1,93 +1,94 @@
 networks:
-  express_network:
+  app_network:
 
 #TODO_PROD: uncomment in production
 # volumes:
-  # db_bike:
+  # db_bike_rental:
   #   driver: local
   # db_order_management:
-  # db_hotel:
-  # db_money:
+  # db_hotel_booking:
+  # db_payment:
 
 services:
 
-  bike-service:
-    build: ./src/backend/bike_micro
+  bike-rental-service:
+    build: ./src/backend/bike-rental
+    tty: true
     environment:
     #TODO_PROD: update in "production"
       - NODE_ENV=development #enabling more verbose logging, using development-specific configurations, or enabling hot-reloading
-      - POSTGRES_DB=bike_renting
+      - POSTGRES_DB=bike_rental
       - POSTGRES_USER=rileone
       - POSTGRES_PASSWORD=password
       - POSTGRES_PORT=5432
-      - DATABASE_URL=postgres://rileone:password@db_bike:5432/bike_renting
+      - DATABASE_URL=postgres://rileone:password@db_bike_rental:5432/bike_rental
     command: >
       sh -c "npm install \
       && npx prisma generate --schema ./src/prisma/schema.prisma \
       && npx tsx src/index.ts"
     #TODO_PROD: remove in production
     volumes:
-      - ./src/backend/bike_micro:/app
-      - ./src/backend/bike_micro/package.json:/app/package.json
+      - ./src/backend/bike-rental:/app
+      - ./src/backend/bike-rental/package.json:/app/package.json
       # - /app/node_modules
     depends_on:
-      - db_bike
+      - db_bike_rental
     networks:
-      - express_network
+      - app_network
     #TODO_PROD: update to serve only in the internal network
     ports:
       - "3000:3000"
     # expose:
     #   - "3000"
 
-  hotel-service:
-    build: ./src/backend/hotel_micro
+  hotel-booking-service:
+    build: ./src/backend/hotel-booking
     environment:
       - NODE_ENV=development
       - POSTGRES_DB=hotel_booking
       - POSTGRES_USER=rileone
       - POSTGRES_PASSWORD=password
       - POSTGRES_PORT=5432
-      - DATABASE_URL=postgres://rileone:password@db_hotel:5432/hotel_renting
+      - DATABASE_URL=postgres://rileone:password@db_hotel_booking:5432/hotel_booking
     command: >
       sh -c "npm install \
       && npx prisma generate --schema ./prisma/schema.prisma \
       && npx tsx src/index.ts"
     volumes:
-      - ./src/backend/hotel_micro:/app
-      - ./src/backend/hotel_micro/package.json:/app/package.json
+      - ./src/backend/hotel-booking:/app
+      - ./src/backend/hotel-booking/package.json:/app/package.json
     depends_on:
-      - db_hotel
+      - db_hotel_booking
     networks:
-      - express_network
+      - app_network
     ports:
       - "3001:3000"
 
-  money-service:
-    build: ./src/backend/money_micro
+  payment-service:
+    build: ./src/backend/payment
     environment:
       - NODE_ENV=development
-      - POSTGRES_DB=money_confirmation
+      - POSTGRES_DB=payment
       - POSTGRES_USER=rileone
       - POSTGRES_PASSWORD=password
       - POSTGRES_PORT=5432
-      - DATABASE_URL=postgres://rileone:password@db_money:5432/money_confirmation
+      - DATABASE_URL=postgres://rileone:password@db_payment:5432/payment
     command: >
       sh -c "npm install \
       && npx prisma generate --schema ./prisma/schema.prisma \
       && npx tsx src/index.ts"
     volumes:
-      - ./src/backend/money_micro:/app
-      - ./src/backend/money_micro/package.json:/app/package.json
+      - ./src/backend/payment:/app
+      - ./src/backend/payment/package.json:/app/package.json
     depends_on:
-      - db_money
+      - db_payment
     networks:
-      - express_network
+      - app_network
     ports:
       - "3002:3000"
     
   order-management-service:
-    build: ./src/backend/order_micro
+    build: ./src/backend/order-management
     environment:
       - NODE_ENV=development
       - POSTGRES_DB=order_management
@@ -100,58 +101,58 @@ services:
       && npx prisma generate --schema ./src/prisma/schema.prisma \
       && npx tsx src/index.ts"
     volumes:
-      - ./src/backend/order_micro:/app
-      - ./src/backend/order_micro/package.json:/app/package.json
+      - ./src/backend/order-management:/app
+      - ./src/backend/order-management/package.json:/app/package.json
     depends_on:
       - db_order_management
     networks:
-      - express_network
+      - app_network
     ports:
       - "3003:3000"
   
-  db_bike:
+  db_bike_rental:
     image: postgres:13
     environment:
       - POSTGRES_USER=rileone
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=bike_renting
+      - POSTGRES_DB=bike_rental
     volumes:
     #TODO_PROD: update to let docker manage the volume
-      - ./db_bike:/var/lib/postgresql/data
-      - ./src/backend/bike_micro/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db_bike_rental:/var/lib/postgresql/data
+      - ./src/backend/bike-rental/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - express_network
+      - app_network
     #TODO_PROD: update to serve only in the internal network
     ports:
       - "5433:5432"
     # expose:
     #   - "5432"
 
-  db_hotel:
+  db_hotel_booking:
     image: postgres:13
     environment:
       - POSTGRES_USER=rileone
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=hotel_booking
     volumes:
-      - ./db_hotel:/var/lib/postgresql/data
-      - ./src/backend/hotel_micro/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db_hotel_booking:/var/lib/postgresql/data
+      - ./src/backend/hotel-booking/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - express_network
+      - app_network
     ports:
       - "5434:5432"
   
-  db_money:
+  db_payment:
     image: postgres:13
-    container_name: db_money_confirmation
+    container_name: db_payment
     environment:
       POSTGRES_USER: rileone
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: money_confirmation
+      POSTGRES_DB: payment
     volumes:
-      - ./db_money:/var/lib/postgresql/data
+      - ./db_payment:/var/lib/postgresql/data
     networks:
-      - express_network
+      - app_network
     ports:
       - "5435:5432"
 
@@ -165,13 +166,10 @@ services:
     volumes:
       - ./db_order_management:/var/lib/postgresql/data
     networks:
-      - express_network
+      - app_network
     ports:
       - "5436:5432"
-  
-  
-  
-  
+
   #--------------------------
   #LOGGING AND MONITORING
 
@@ -186,7 +184,7 @@ services:
   #    - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
   #    - GF_AUTH_DISABLE_LOGIN_FORM=true
   #  networks:
-  #    - express_network
+  #    - app_network
 #
   #loki:
   #  image: grafana/loki:latest
@@ -194,7 +192,7 @@ services:
   #    - 3100:3100
   #  command: -config.file=/etc/loki/local-config.yaml
   #  networks:
-  #    - express_network
+  #    - app_network
 #
   #promtail:
   #  image:  grafana/promtail:latest
@@ -207,5 +205,5 @@ services:
   #  depends_on:
   #    - loki
   #  networks:
-  #    - express_network
+  #    - app_network
 
