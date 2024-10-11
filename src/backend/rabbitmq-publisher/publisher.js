@@ -1,13 +1,14 @@
 // publisher.js
 
 import amqp from 'amqplib';
+import dotenv from 'dotenv';
 
 const QUEUE = 'booking_request';
 
 async function publishMessage() {
     try {
         // Connect to RabbitMQ using the connection string
-        const connection = await amqp.connect(`amqp://rileone:password@localhost:5672`);
+        const connection = await amqp.connect(process.env.RABBITMQ_URL);
         const channel = await connection.createChannel();
 
         // Ensure the queue exists

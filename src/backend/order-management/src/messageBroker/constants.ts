@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 const YOUR_USERNAME=process.env.RABBITMQ_USER
 const YOUR_PASSWORD=process.env.RABBITMQ_PASSWORD
 
-export const CONNECTION_STRING = `amqp://${YOUR_USERNAME}:${YOUR_PASSWORD}@localhost:5672/`;
+export const CONNECTION_STRING = process.env.RABBITMQ_URL
 
 // Define queue properties and configurations
 export const QUEUE_OPTIONS = {
