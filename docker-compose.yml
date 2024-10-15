@@ -13,7 +13,6 @@ volumes:
 networks:
   app_network:
     driver: bridge
-
 services:
 #--------------------------------- -  -
 #---------------------------BACKEND SERVICES
@@ -52,7 +51,7 @@ services:
       - db_hotel_booking
     command: >
       sh -c " \
-      && npx prisma generate --schema ./prisma/schema.prisma \
+      npx prisma generate --schema ./prisma/schema.prisma \
       && npx tsx src/index.ts"
     volumes:
       - ./src/backend/hotel-booking:/app
@@ -69,7 +68,7 @@ services:
     networks:
       - app_network
     ports: 
-      - "3001:3000"
+      - "3001:3000" 
   #--------------------------PAYMENT CONFIRMATION
   payment-confirmation-service:
     container_name: payment-confirmation-service
@@ -78,6 +77,7 @@ services:
       - db_payment_confirmation
     command: >
       sh -c " \
+      npx prisma generate --schema ./prisma/schema.prisma \
       && npx tsx src/index.ts"
     volumes:
       - ./src/backend/payment-confirmation:/app
@@ -103,7 +103,7 @@ services:
       - db_order_management
     command: >
       sh -c " \
-      && npx prisma generate --schema ./prisma/schema.prisma \
+      npx prisma generate --schema ./prisma/schema.prisma \
       && npx tsx src/index.ts"
     volumes:
       - ./src/backend/order-management:/app
