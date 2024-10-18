@@ -8,7 +8,7 @@ type HandlerCB = (msg: string, instance?: RabbitClient) => any;
 export class RabbitClient {
   connection!: Connection;
   channel!: Channel;
-  private connected!: Boolean;
+  connected!: Boolean;
 
   async connect() {
     if (this.connected && this.channel) return;
