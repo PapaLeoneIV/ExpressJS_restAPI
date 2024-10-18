@@ -35,6 +35,7 @@ services:
     volumes:
       - ./src/backend/bike-rental:/app
       - ./src/backend/bike-rental/package.json:/app/package.json
+      - ./config/jest.config.cjs:/app/jest.config.cjs
     env_file:
       - .env
     environment:
